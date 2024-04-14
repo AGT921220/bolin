@@ -1,0 +1,103 @@
+version: '3'
+
+networks:
+  appnetwork:
+
+services:
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx-bolin
+    ports:
+      - "${PORT_NGINX:-80}:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/${NGINX_CONF_FILE:-default.conf}:/etc/nginx/conf.d/default.conf
+    #   - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - php
+      - mysql
+      - redis
+      # - sqlserver
+    networks:
+      - appnetwork
+
+  mysql:
+    image: mysql:5.7.32
+    container_name: mysql-bolin
+    restart: on-failure
+    tty: true
+    ports:
+      - "4306:3307"
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=db
+    volumes:
+      - ${PWD}/docker/mysql/bolindb.sql:/var/lib/mysql
+    #   - ${PWD}/docker/mysql/bolin.sql:/docker-entrypoint-initdb.d/bolin.sql
+    networks:
+      - appnetwork
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma-bolin
+    environment:
+      PMA_HOST: mysql-bolin
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - "${PORT_PHPMYADMIN:-81}:80"
+    networks:
+      - appnetwork
+
+  redis:
+    image: redis:latest
+    container_name: redis-bolin
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - appnetwork
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php-bolin
+    volumes:
+      - ./:/var/www/html/
+    ports:
+      - "9002:9001"
+    networks:
+      - appnetwork
+
+  postfix:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: postfix-container
+    ports:
+      - "25:25"
+    # volumes:
+    #   - /ruta/al/archivo/de/configuración/postfix:/etc/postfix
+
+  # sqlserver:
+  #   image: mcr.microsoft.com/mssql/server:2019-latest
+  #   container_name: sqlserver-bolin
+  #   environment:
+  #     - ACCEPT_EULA=Y
+  #     - SA_PASSWORD=YourNewPassword8!
+  #   ports:
+  #     - "1433:1433"
+  #   # volumes:
+  #   #   - ./docker/sqlserver/data:/var/opt/mssql/data
+  #   networks:
+  #     - appnetwork
+
+volumes:
+  redis_data:
