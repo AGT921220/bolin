@@ -182,6 +182,7 @@ class Text extends Authenticatable
             'menu_about'                   => $data['menu_about'][$i],
             'menu_faq'                     => $data['menu_faq'][$i],
             'menu_contact'                 => $data['menu_contact'][$i],
+            'menu_categories'              => $data['menu_categories'][$i],
             'lang_title'                   => $data['lang_title'][$i],
             'update_lang'                  => $data['update_lang'][$i],
             'd_login_phone'                => $data['d_login_phone'][$i],

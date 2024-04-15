@@ -848,6 +848,13 @@
 <input type="text" name="menu_faq[]" class="form-control" value="{{ $data->getSData($l['id'],'menu_faq') }}">
 </div>
 
+
+<div class="form-group col-md-4">
+    <label for="inputEmail6">Categorías</label>
+    <input type="text" name="menu_categories[]" class="form-control" value="{{ $data->getSData($l['id'],'menu_categories') }}">
+    </div>
+    
+    
 <div class="form-group col-md-4">
 <label for="inputEmail6">Contact Us</label>
 <input type="text" name="menu_contact[]" class="form-control" value="{{ $data->getSData($l['id'],'menu_contact') }}">

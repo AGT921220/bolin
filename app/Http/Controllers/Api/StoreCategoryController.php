@@ -21,7 +21,7 @@ class StoreCategoryController extends Controller
 	public function index(Request $request)
 	{
 
-		$res = new Category();
+		$res = Category::select('*');
 		$storeId = $request->input('store_id');
 		if ($storeId) {
 			$res
@@ -32,5 +32,13 @@ class StoreCategoryController extends Controller
 		return $categories;
 		//		return View($this->folder.'index',['data' => $res->getAll(),'link' => env('store').'/category/']);
 
+	}
+	public function store(Request $request)
+	{
+		$category = new Category();
+		$category->name = $request->input('category_name');
+		$category->store_id = $request->input('user_id');
+		$category->save();
+		return $category->id;
 	}
 }
